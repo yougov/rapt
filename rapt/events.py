@@ -1,30 +1,28 @@
-
-
-
 class SwarmEventProps(object):
 
     @property
     def deploy_title(self):
         if not hasattr(self, '_deploy_title'):
-            self._deploy_title = '%s-%s-%s' % (self.swarm.app_name,
-                                               self.swarm.version,
-                                               self.swarm.proc_name)
+            self._deploy_title = '%s-%s-%s' % (self.app_name,
+                                               self.version,
+                                               self.proc_name)
         return self._deploy_title
 
     @property
     def build_title(self):
         if not hasattr(self, '_build_title'):
-            self._build_title = '%s-%s' % (self.swarm.app_name,
-                                           self.swarm.version)
+            self._build_title = '%s-%s' % (self.app_name,
+                                           self.version)
         return self._build_title
 
 
 class SwarmEvents(SwarmEventProps):
 
-    def __init__(self, swarm, vr):
-        self.swarm = swarm
-        self.vr = vr
-        self.username = self.vr.username
+    def __init__(self, app_name, version, proc_name, username):
+        self.app_name = app_name
+        self.version = version
+        self.proc_name = proc_name
+        self.username = username
         self.deployed = 0
         self.destroyed = 0
         self.routed = False
@@ -92,7 +90,6 @@ def filtered_events(vr, handlers=None):
         handlers = [lambda x: x]
 
     for event in vr.events():
-        print(event)
         for handler in handlers:
             message = handler(event)
             if message:
