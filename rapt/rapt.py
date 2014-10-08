@@ -1,12 +1,13 @@
 import sys
-import pdb
 import yaml
+import json
 
 import click
 
 from vr.common.models import Swarm
 
 from .connection import get_vr
+from .events import SwarmEvents
 
 
 class StdInOrStringList(click.ParamType):
@@ -71,7 +72,28 @@ def swarm(names):
         }
         config = edit_yaml(yaml.dump(current_config, default_flow_style=False))
         if config:
-            click.echo('Got config: %s' % config)
+            click.echo('Updating swarm config with: %s' % config)
+            swarm.dispatch(**config)
+            click.echo('Swarmed!')
+            click.echo('Watching for events. Hit C-c to exit')
+            events = SwarmEvents(swarm, vr)
+            for event in events:
+                click.echo(event)
+
+
+@click.command()
+def test():
+    from mock import Mock
+
+    vr = get_vr()
+    # for event in swarm_events(None, vr):
+    swarm = Mock(app_name='pangaea',
+                 version='3.3.7',
+                 proc_name='worker')
+
+    events = SwarmEvents(swarm, vr)
+    for event in events:
+        print(event)
 
 
 @click.group()
@@ -81,6 +103,7 @@ def rapt():
 
 rapt.add_command(swarms)
 rapt.add_command(swarm)
+rapt.add_command(test)
 
 if __name__ == '__main__':
     rapt()
