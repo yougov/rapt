@@ -13,6 +13,7 @@ history = open('HISTORY.rst').read().replace('.. :changelog:', '')
 
 requirements = [
     'click',
+    'keyring',
     'vr.common',
 ]
 
@@ -34,6 +35,10 @@ setup(
     license="BSD",
     zip_safe=False,
     keywords='rapt',
+    entry_points='''
+        [console_scripts]
+        rapt=rapt.rapt:rapt
+    ''',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
