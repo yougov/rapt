@@ -1,13 +1,12 @@
 import sys
 import yaml
-import json
 
 import click
 
 from vr.common.models import Swarm
 
 from .connection import get_vr
-from .events import SwarmEvents
+from .events import SwarmEvents, filtered_events
 
 
 class StdInOrStringList(click.ParamType):
@@ -19,8 +18,8 @@ class StdInOrStringList(click.ParamType):
 
     def convert(self, value, param, ctx):
         if value == '-':
-            return self.gen(sys.stdin)
-        return [value]
+            return [name for name in self.gen(sys.stdin)]
+        return value
 
 
 @click.command()
@@ -48,9 +47,13 @@ def swarms(app_name, config_name, proc_name):
             click.echo(swarm.name)
 
 
-def edit_yaml(content=''):
-    MARKER = '# Everything below is ignored\n'
-    message = click.edit(content + '\n\n' + MARKER,
+def dump_yaml(obj):
+    return yaml.dump(obj, default_flow_style=False)
+
+
+def edit_yaml(content='', footer=''):
+    MARKER = '# Everything below is ignored\n\n'
+    message = click.edit(content + '\n\n' + MARKER + footer,
                          extension='.yaml')
     if message is not None:
         yaml_content = message.split(MARKER, 1)[0].rstrip('\n')
@@ -61,39 +64,41 @@ def edit_yaml(content=''):
 @click.argument('names', type=StdInOrStringList(), nargs=-1)
 def swarm(names):
     vr = get_vr()
-    if names:
-        names = names[0]
+    print(names)
+    swarms = [Swarm.by_name(vr, name) for name in names]
 
-    for name in names:
-        swarm = Swarm.by_name(vr, name)
-        current_config = {
+    # collect config
+    configs = {
+        swarm.name: {
             'version': str(swarm.version),
             'size': str(swarm.size)
         }
-        config = edit_yaml(yaml.dump(current_config, default_flow_style=False))
-        if config:
-            click.echo('Updating swarm config with: %s' % config)
+        for swarm in swarms
+    }
+
+    config = edit_yaml(dump_yaml(configs.values()[0]),
+                       footer=dump_yaml(configs))
+
+    if config:
+        click.echo('Updating swarms with: %s' % config)
+
+        event_handlers = []
+
+        for swarm in swarms:
             swarm.dispatch(**config)
-            click.echo('Swarmed!')
-            click.echo('Watching for events. Hit C-c to exit')
-            events = SwarmEvents(swarm, vr)
-            for event in events:
-                click.echo(event)
+            event_handlers.append(SwarmEvents(swarm, vr))
+            click.echo('Swarmed %s!' % swarm.name)
+
+        click.echo('Watching for events. Hit C-c to exit')
+        for event in filtered_events(event_handlers, vr):
+            click.echo(event)
 
 
 @click.command()
-def test():
-    from mock import Mock
-
+def event_stream():
     vr = get_vr()
-    # for event in swarm_events(None, vr):
-    swarm = Mock(app_name='pangaea',
-                 version='3.3.7',
-                 proc_name='worker')
-
-    events = SwarmEvents(swarm, vr)
-    for event in events:
-        print(event)
+    for event in filtered_events(vr):
+        click.echo(event)
 
 
 @click.group()
@@ -103,7 +108,8 @@ def rapt():
 
 rapt.add_command(swarms)
 rapt.add_command(swarm)
-rapt.add_command(test)
+rapt.add_command(event_stream)
+# rapt.add_command(test)
 
 if __name__ == '__main__':
     rapt()
