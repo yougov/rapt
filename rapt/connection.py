@@ -15,7 +15,7 @@ def auth_domain(url):
 
 
 def set_password(url, username):
-    hostname = auth_domain(url)
+    hostname = auth_domain(url) or 'localhost'
     password = keyring.get_password(hostname, username)
 
     if not password:
