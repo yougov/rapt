@@ -50,7 +50,7 @@ def swarm_id_handler(swarm_id):
 def swarm(names, dry_run):
     vr = get_vr()
     swarms = load_swarms(vr, names or stdin())
-    configs = {swarm.name: swarm.config for swarm in swarms}
+    configs = {str(swarm.name): swarm.config for swarm in swarms}
     if not configs:
         click.echo('No configs found')
         return
