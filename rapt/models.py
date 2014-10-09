@@ -12,3 +12,8 @@ def apps(vr):
 def buildpacks(vr):
     doc = vr.query(models.Buildpack.base, {})
     return doc['objects']
+
+
+def squads(vr):
+    doc = vr.query(models.Squad.base, {})
+    return doc['objects']
