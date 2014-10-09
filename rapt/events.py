@@ -94,7 +94,12 @@ def format_event(event):
     return message
 
 
-def filtered_events(vr, handlers=None):
+def stop_listening(event):
+    tags = event['tags']
+    return 'done' in tags or 'failed' in tags
+
+
+def filtered_events(vr, handlers=None, forever=False):
     if not handlers:
         handlers = [lambda x: x]
 
@@ -104,5 +109,7 @@ def filtered_events(vr, handlers=None):
             if message:
                 yield format_event(message)
 
-            if message and 'done' in event['tags']:
+            # TODO: come up with a better way to exit via a handler
+            #       rather than manually checking the tags.
+            if message and stop_listening(event) and not forever:
                 return

@@ -1,3 +1,5 @@
+import os
+
 import click
 
 from .connection import get_vr
@@ -10,13 +12,18 @@ from .cmds.swarms import swarms
 @click.command()
 def event_stream():
     vr = get_vr()
-    for event in filtered_events(vr):
+    for event in filtered_events(vr, forever=True):
         click.echo(event)
 
 
 @click.group()
-def rapt():
-    pass
+@click.option('--username', '-u')
+@click.option('--password', '-p')
+def rapt(username, password):
+    if username:
+        os.environ['VELOCIRAPTOR_USERNAME'] = username
+    if password:
+        os.environ['VELOCIRAPTOR_PASSWORD'] = password
 
 
 rapt.add_command(swarms)
