@@ -3,6 +3,10 @@ import yaml
 import click
 
 
+def load_yaml(fh_or_string):
+    return yaml.safe_load(fh_or_string)
+
+
 def dump_yaml(obj):
     return yaml.dump(obj, default_flow_style=False)
 
