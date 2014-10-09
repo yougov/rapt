@@ -37,6 +37,13 @@ def swarm_config(swarm):
     }
 
 
+def swarm_id_handler(swarm_id):
+    def handler(event):
+        if 'swarm_id' in event and event['swarm_id'] == swarm_id:
+            return event
+    return handler
+
+
 @click.command()
 @click.argument('names', nargs=-1)
 @click.option('--dry-run', is_flag=True, default=False)
@@ -61,9 +68,8 @@ def swarm(names, dry_run):
         if config != swarm.config:
             click.echo('Updating swarms with: %s' % config)
             if not dry_run:
-                swarm.dispatch(**config)
-            click.echo('Adding swarm event handlers: %s' % swarm.handlers)
-            event_handlers.append(swarm.handlers)
+                doc = swarm.obj.dispatch(**config)
+                event_handlers.append(swarm_id_handler(doc['swarm_id']))
             click.echo('Swarmed %s!' % swarm.name)
 
     if event_handlers:
