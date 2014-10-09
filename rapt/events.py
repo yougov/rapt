@@ -103,3 +103,6 @@ def filtered_events(vr, handlers=None):
             message = handler(event)
             if message:
                 yield format_event(message)
+
+            if message and 'done' in event['tags']:
+                return
