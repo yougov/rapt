@@ -79,8 +79,17 @@ FORMAT_TMPL = '{time} {title} {tags}'
 
 
 def format_event(event):
+    tail = []
+    for k, v in event.items():
+        if k not in ['time', 'title', 'tags', 'message']:
+            tail.append('%s: %s' % (k, v))
+
     message = FORMAT_TMPL.format(**event)
-    if 'failure' in event['tags']:
+
+    if tail:
+        message += ' ' + ' '.join(tail)
+
+    if 'failure' in event['tags'] or 'failed' in event['tags']:
         message += '\n\n' + event['message']
     return message
 
