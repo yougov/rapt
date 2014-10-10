@@ -42,20 +42,28 @@ def info():
     click.echo('The Velociraptor URL I have on file is %s' % vr.base)
     click.echo('Youre username is %s' % vr.username)
     url = vr._build_url('/api/v1/')
-    resp = vr.session.head(url)
-    if resp.ok:
+    resp = None
+    try:
+        resp = vr.session.head(url)
+    except Exception as e:
+        pass
+
+    if resp and resp.ok:
         click.echo('I made a request to the API and things look good!')
     else:
         click.echo('Hmm... We had some trouble contacting the API.')
         click.echo('Here is some traceback from the response:')
         click.echo()
 
-        click.echo('Request: HEAD %s' % resp.request.url)
-        click.echo('Headers: %s' % pformat(dict(resp.headers)))
-        click.echo('Content: %s' % resp.content)
-        click.echo()
+        if not resp and e:
+            raise e
+        else:
+            click.echo('Request: HEAD %s' % resp.request.url)
+            click.echo('Headers: %s' % pformat(dict(resp.headers)))
+            click.echo('Content: %s' % resp.content)
+            click.echo()
 
-        resp.raise_for_status()
+            resp.raise_for_status()
 
 
 @click.group()
