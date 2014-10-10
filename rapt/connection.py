@@ -31,4 +31,5 @@ def get_vr(username=None):
     base = os.environ['VELOCIRAPTOR_URL']
 
     set_password(base, username)
+
     return Velociraptor(base=base, username=username)
