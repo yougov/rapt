@@ -13,7 +13,7 @@ rapt
 	   :target: https://pypi.python.org/pypi/rapt
 
 
-A command line tool for Velocirapter_
+A command line tool for `Velocirapter <https://bitbucket.org/yougov/velociraptor>`_
 
 * Free software: BSD license
 ..
@@ -87,6 +87,3 @@ Features
 ========
 
 * TODO
-
-
-.. _Velociraptor: https://bitbucket.org/yougov/velociraptor
