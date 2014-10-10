@@ -1,7 +1,7 @@
 import click
 
 from rapt.connection import get_vr
-from rapt.models import buildpacks, models
+from rapt.models import query, models
 from rapt.util import edit_yaml, dump_yaml
 
 from pprint import pformat
@@ -19,7 +19,9 @@ def buildpack():
     vr = get_vr()
 
     info = {
-        'available buildpacks': [str(bp['repo_url']) for bp in buildpacks(vr)]
+        'available buildpacks': [
+            bp.repo_url for bp in query('buildpack', vr)
+        ]
     }
 
     config = edit_yaml(dump_yaml(tmpl),

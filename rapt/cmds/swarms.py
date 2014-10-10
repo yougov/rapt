@@ -1,8 +1,7 @@
 import click
 
-from vr.common.models import Swarm
-
-from ..connection import get_vr
+from rapt.models import query
+from rapt.connection import get_vr
 
 
 @click.command()
@@ -12,19 +11,17 @@ from ..connection import get_vr
 def swarms(app_name, config_name, proc_name):
     vr = get_vr()
     if not app_name:
-        swarms = Swarm.load_all(vr)
+        swarms = query('Swarm', vr)
         for swarm in swarms:
             click.echo(swarm.name)
     else:
-        query = {
+        q = {
             'app__name__icontains': app_name,
             'config_name': config_name,
             'proc_name': proc_name,
         }
 
-        query = {k: v for k, v in query.items() if v}
+        q = {k: v for k, v in q.items() if v}
 
-        results = vr.query(Swarm.base, query)
-        for doc in results['objects']:
-            swarm = Swarm(vr, doc)
+        for swarm in query('Swarm', q):
             click.echo(swarm.name)

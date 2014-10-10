@@ -1,7 +1,7 @@
 import click
 
 from rapt.connection import get_vr
-from rapt.models import apps, models
+from rapt.models import query, models
 from rapt.util import edit_yaml, dump_yaml
 
 from pprint import pformat
@@ -35,7 +35,7 @@ def app():
     vr = get_vr()
 
     info = {
-        'current_apps': [app['name'] for app in apps(vr)],
+        'current_apps': [app.name for app in query('App', vr)],
     }
 
     config = edit_yaml(dump_yaml(tmpl), dump_yaml(info))

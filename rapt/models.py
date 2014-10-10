@@ -3,17 +3,13 @@ vr.common."""
 from vr.common import models
 
 
-def apps(vr):
-    # find some info to help fill in the JSON
-    doc = vr.query(models.App.base, {})
-    return doc['objects']
+def query(name, vr, query=None):
+    model = getattr(models, name, None)
+    if not model:
+        raise Exception('%s is not a valid vr.common.model' % name)
+    doc = vr.query(model.base, query or None)
+    if 'objects' in doc and doc['objects']:
+        return [model(vr, obj) for obj in doc['objects']]
 
-
-def buildpacks(vr):
-    doc = vr.query(models.Buildpack.base, {})
-    return doc['objects']
-
-
-def squads(vr):
-    doc = vr.query(models.Squad.base, {})
-    return doc['objects']
+    print(doc)
+    return []

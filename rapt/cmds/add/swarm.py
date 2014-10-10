@@ -1,15 +1,15 @@
 import click
 
 from rapt.connection import get_vr
-from rapt.models import apps, squads, models
+from rapt.models import query, models
 from rapt.util import edit_yaml, dump_yaml, load_yaml
 
 from pprint import pformat
 
 
 def validate_uri(name_or_uri, objs):
-    uris = set([s['resource_uri'] for s in objs])
-    names = {s['name']: s['resource_uri'] for s in objs}
+    uris = set([s.resource_uri for s in objs])
+    names = {s.name: s.resource_uri for s in objs}
 
     if name_or_uri in names:
         return names[name_or_uri]
@@ -40,13 +40,11 @@ def get_config(vr, app_list, squad_list):
         'NOTES': 'Use the URL when copying vlaues.',
 
         'available apps': {
-            str(app['name']): str(app['resource_uri'])
-            for app in app_list
+            app.name: app.resource_uri for app in app_list
         },
 
         'available squads': {
-            str(squad['name']): str(squad['resource_uri'])
-            for squad in squad_list
+            squad.name: squad.resource_uri for squad in squad_list
         },
     }
 
@@ -60,16 +58,16 @@ def swarm(config):
     """Add a new swarm."""
     vr = get_vr()
 
-    app_list = apps(vr)
-    squad_list = squads(vr)
+    apps = query('App', vr)
+    squads = query('Squad', vr)
 
     if config:
         config = load_yaml(config[0])
 
-    config = config or get_config(vr, app_list, squad_list)
+    config = config or get_config(vr, apps, squads)
 
     if config:
-        config = validate(config, squad_list, app_list)
+        config = validate(config, squads, apps)
         click.echo('Creating swarm with following config:\n\n')
         click.echo(dump_yaml(config))
         click.echo()

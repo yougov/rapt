@@ -8,6 +8,8 @@ from .events import filtered_events
 from .cmds.swarm import swarm
 from .cmds.swarms import swarms
 from .cmds.add import add
+from .cmds.releases import releases
+from .cmds.build import build
 
 
 @click.command()
@@ -31,6 +33,8 @@ rapt.add_command(swarms)
 rapt.add_command(swarm)
 rapt.add_command(event_stream)
 rapt.add_command(add)
+rapt.add_command(releases)
+rapt.add_command(build)
 # rapt.add_command(test)
 
 if __name__ == '__main__':
