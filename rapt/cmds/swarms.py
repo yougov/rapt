@@ -23,5 +23,5 @@ def swarms(app_name, config_name, proc_name):
 
         q = {k: v for k, v in q.items() if v}
 
-        for swarm in query('Swarm', q):
+        for swarm in query('Swarm', vr, q):
             click.echo(swarm.name)
