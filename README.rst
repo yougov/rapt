@@ -1,6 +1,6 @@
-===============================
+====
 rapt
-===============================
+====
 
 ..
    .. image:: https://badge.fury.io/py/rapt.png
@@ -60,9 +60,31 @@ Generally if a model you are adding has a name it can be used in place
 of the the URI and `rapt` will do the right thing to fix it up for
 you.
 
+Getting Started
+===============
+
+First off start by installing `rapt`.
+
+  $ pip install rapt
+
+Then you need to configure the location of Velociraptor and the
+username you use to login into VR:
+
+  $ export VELOCIRAPTOR_URL=http://deploy.myhost.com
+  $ export VELOCIRAPTOR_USERNAME=mike
+
+The first time you use rapt it will save your password in your local
+keyring so you don't have to login everytime.
+
+
+Help
+====
+
+Try the `--help` to see how to use rapt.
+
 
 Features
---------
+========
 
 * TODO
 
