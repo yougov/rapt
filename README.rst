@@ -22,11 +22,11 @@ A command line tool for Velocirapter_
 Usage
 =====
 
-Swarm all the apps containing `foo`:
+Swarm all the apps containing `foo`: ::
 
   $ rapt swarms | grep foo | rapt swarm
 
-This will open your `$EDITOR` with a YAML file that looks like:
+This will open your `$EDITOR` with a YAML file that looks like: ::
 
   foo-prod-worker:
     version: 3.4.5
@@ -42,7 +42,7 @@ After swarming the event stream will be printed for the events related
 to your swarm(s). It should close when there is a failure or when
 things have finished.
 
-You can also add/edit items:
+You can also add/edit items::
 
   $ rapt add app
 
@@ -51,7 +51,7 @@ app. It will also provide a list of available options in the bottom
 area for you to copy/paste from.
 
 If you edit the file outside of this environment you can pass it in
-via stdin or as an argument:
+via stdin or as an argument ::
 
   $ cat my_app.yaml | rapt add app   # via stdin
   $ rapt add app my_app.yaml
@@ -63,12 +63,12 @@ you.
 Getting Started
 ===============
 
-First off start by installing `rapt`.
+First off start by installing `rapt`. ::
 
   $ pip install rapt
 
 Then you need to configure the location of Velociraptor and the
-username you use to login into VR:
+username you use to login into VR. ::
 
   $ export VELOCIRAPTOR_URL=http://deploy.myhost.com
   $ export VELOCIRAPTOR_USERNAME=mike
