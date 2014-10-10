@@ -5,7 +5,7 @@ import click
 from .connection import get_vr
 
 from .events import filtered_events
-from .cmds.swarm import swarm
+from .cmds.swarm import swarm, reswarm
 from .cmds.swarms import swarms
 from .cmds.add import add
 from .cmds.releases import releases
@@ -80,6 +80,7 @@ def rapt(username, host):
 
 rapt.add_command(swarms)
 rapt.add_command(swarm)
+rapt.add_command(reswarm)
 rapt.add_command(releases)
 rapt.add_command(build)
 rapt.add_command(builds)

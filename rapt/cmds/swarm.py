@@ -46,8 +46,28 @@ def swarm_id_handler(swarm_id):
 
 @click.command()
 @click.argument('names', nargs=-1)
-@click.option('--dry-run', is_flag=True, default=False)
+@click.option('--dry-run', is_flag=True, default=False,
+              help='Do not actually reswarm anything.')
 def swarm(names, dry_run):
+    """Swarm an existing swarm.
+
+    The swarm command allows swarming more than one swarm as defined
+    by the `names` argument. The names can be passed directly in the
+    command.
+
+      $ rapt swarm myapp-production-web myapp-production-workers
+
+    The `names` can also be passed in via stdin. For eaxmple:
+
+      $ rapt swarms | grep myapp | rapt swarm
+
+    This will open a YAML file where each swarm's settings can be
+    edited. Only those swarms that have been edited will be reswarmed.
+
+    After the swarms have been triggered, the events for those swarms
+    will be printed. The script will exit when the events have
+    finished or there has been a failure in one of swarms.
+    """
     vr = get_vr()
     swarms = load_swarms(vr, names or stdin())
     configs = {str(swarm.name): swarm.config for swarm in swarms}
@@ -71,6 +91,30 @@ def swarm(names, dry_run):
                 doc = swarm.obj.dispatch(**config)
                 event_handlers.append(swarm_id_handler(doc['swarm_id']))
             click.echo('Swarmed %s!' % swarm.name)
+
+    if event_handlers:
+        click.echo('Watching for events. Hit C-c to exit')
+        for event in filtered_events(vr, event_handlers):
+            click.echo(event)
+
+
+@click.command()
+@click.argument('names', nargs=-1)
+@click.option('--dry-run', is_flag=True, default=False,
+              help='Do not actually reswarm anything.')
+def reswarm(names, dry_run):
+    """Reswarm a swarm without editing the config."""
+    vr = get_vr()
+    swarms = load_swarms(vr, names or stdin())
+
+    event_handlers = []
+
+    for swarm in swarms:
+        click.echo('Running swarm %s with: %s' % (swarm.name, swarm.config))
+        if not dry_run:
+            doc = swarm.obj.dispatch(**swarm.config)
+            event_handlers.append(swarm_id_handler(doc['swarm_id']))
+        click.echo('Swarmed %s!' % swarm.name)
 
     if event_handlers:
         click.echo('Watching for events. Hit C-c to exit')
