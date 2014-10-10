@@ -1,13 +1,29 @@
 """These are helpers for working with the models / json docs from
 vr.common."""
+import sys
+import click
+
 from vr.common import models
+from requests.exceptions import ConnectionError
+
+from .codes import CONNECTION_ERROR
 
 
 def query(name, vr, query=None):
     model = getattr(models, name, None)
     if not model:
         raise Exception('%s is not a valid vr.common.model' % name)
-    doc = vr.query(model.base, query or None)
+
+    try:
+        doc = vr.query(model.base, query or None)
+    except ConnectionError:
+        click.echo('Hmm... I had some trouble connecting to Velociraptor.')
+        click.echo("I'm using '%s' for the URL with the username '%s'." % (
+            vr.base, vr.username
+        ))
+        click.echo('Does that look right?')
+        sys.exit(CONNECTION_ERROR)
+
     if 'objects' in doc and doc['objects']:
         return [model(vr, obj) for obj in doc['objects']]
 
