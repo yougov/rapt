@@ -14,19 +14,27 @@ from .cmds.build import build
 
 @click.command()
 def event_stream():
+    """Tail the event stream.
+
+    This will print the time, title, tags and any other top level keys
+    other than message. If event has an error tag ('failed',
+    'failure'), the message will be printed as well."""
+
     vr = get_vr()
     for event in filtered_events(vr, forever=True):
         click.echo(event)
 
 
 @click.group()
-@click.option('--username', '-u')
-@click.option('--password', '-p')
-def rapt(username, password):
+@click.option('--username', '-u', help='Velociraptor Username')
+@click.option('--host', '-H', help='The Velociraptor URL')
+def rapt(username, host):
+    """Rapt! The velociraptor command line tool."""
+
     if username:
         os.environ['VELOCIRAPTOR_USERNAME'] = username
-    if password:
-        os.environ['VELOCIRAPTOR_PASSWORD'] = password
+    if host:
+        os.environ['VELOCIRAPTOR_URL'] = host
 
 
 rapt.add_command(swarms)

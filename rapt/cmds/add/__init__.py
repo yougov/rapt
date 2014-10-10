@@ -8,6 +8,7 @@ from .buildpack import buildpack
 
 @click.group()
 def add():
+    """Add new models."""
     pass
 
 
