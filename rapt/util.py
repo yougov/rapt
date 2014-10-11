@@ -23,3 +23,8 @@ def edit_yaml(content='', footer=''):
 def stdin():
     for line in sys.stdin:
         yield line.strip()
+
+
+def is_resource_uri(string):
+    # names can't have slashes
+    return '/' in string

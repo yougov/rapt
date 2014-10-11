@@ -15,7 +15,7 @@ def query(name, vr, query=None):
         raise Exception('%s is not a valid vr.common.model' % name)
 
     try:
-        doc = vr.query(model.base, query or None)
+        cursor = vr.query(model.base, query or None)
     except ConnectionError:
         click.echo('Hmm... I had some trouble connecting to Velociraptor.')
         click.echo("I'm using '%s' for the URL with the username '%s'." % (
@@ -24,8 +24,5 @@ def query(name, vr, query=None):
         click.echo('Does that look right?')
         sys.exit(CONNECTION_ERROR)
 
-    if 'objects' in doc and doc['objects']:
-        return [model(vr, obj) for obj in doc['objects']]
-
-    print(doc)
-    return []
+    for obj in cursor:
+        yield model(vr, obj)
