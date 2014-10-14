@@ -1,12 +1,13 @@
+import sys
+
 from collections import namedtuple
 
 import click
 
-from vr.common.models import Swarm
-
-from ..util import stdin, edit_yaml, dump_yaml
-from ..events import SwarmEvents, filtered_events
-from ..connection import get_vr
+from rapt.models import query
+from rapt.util import stdin, edit_yaml, dump_yaml
+from rapt.events import SwarmEvents, filtered_events
+from rapt.connection import get_vr
 
 
 SwarmInfo = namedtuple('SwarmInfo', ['name', 'obj', 'config', 'handlers'])
@@ -23,7 +24,19 @@ def load_swarms(vr, names):
     """Return an ordered of swarms."""
     swarms = []
     for name in names:
-        swarm = Swarm.by_name(vr, name)
+        try:
+            app_name, config_name, proc_name = name.split('-')
+        except ValueError:
+            click.echo('Invalid swarm name %s' % name)
+            sys.exit(3)
+
+        q= {
+            'app_name': name,
+            'config_name': config_name,
+            'proc_name': proc_name
+        }
+
+        swarm = query('Swarm', vr, q).next()
         handlers = swarm_event_handler(swarm, vr.username)
         swarms.append(SwarmInfo(name, swarm, swarm_config(swarm), handlers))
     return swarms
