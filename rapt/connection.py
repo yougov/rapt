@@ -17,6 +17,11 @@ def auth_domain(url):
 def set_password(url, username):
     hostname = auth_domain(url) or 'localhost'
     os.environ['VELOCIRAPTOR_AUTH_DOMAIN'] = hostname
+    password = os.environ.get('VELOCIRAPTOR_PASSWORD', None)
+
+    if password:
+        keyring.set_password(hostname, username, password)
+
     password = keyring.get_password(hostname, username)
 
     if not password:

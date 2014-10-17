@@ -71,7 +71,6 @@ def info():
 @click.option('--host', '-H', help='The Velociraptor URL')
 def rapt(username, host):
     """Rapt! The velociraptor command line tool."""
-
     if username:
         os.environ['VELOCIRAPTOR_USERNAME'] = username
     if host:
