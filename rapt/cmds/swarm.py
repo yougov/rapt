@@ -30,8 +30,8 @@ def load_swarms(vr, names):
             click.echo('Invalid swarm name %s' % name)
             sys.exit(3)
 
-        q= {
-            'app_name': name,
+        q = {
+            'app__name': app_name,
             'config_name': config_name,
             'proc_name': proc_name
         }
