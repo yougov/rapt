@@ -13,7 +13,7 @@ def validate(config, apps, images):
         config['app'] = apps[config['app']]
 
     if 'os_image' not in config or not config['os_image']:
-        config['os_image'] = images[0].resource_uri
+        config['os_image'] = list(images)[0].resource_uri
 
     return config
 
