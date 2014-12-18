@@ -11,11 +11,24 @@ from .cmds.add import add
 from .cmds.releases import releases
 from .cmds.build import build
 from .cmds.builds import builds
+from .cmds.apps import apps
+from .cmds.ingredients import ingredients, ingredient
 
 from pprint import pformat
 
 
-@click.command()
+@click.group()
+@click.option('--username', '-u', help='Velociraptor Username')
+@click.option('--host', '-H', help='The Velociraptor URL')
+def rapt(username, host):
+    """Rapt! The velociraptor command line tool."""
+    if username:
+        os.environ['VELOCIRAPTOR_USERNAME'] = username
+    if host:
+        os.environ['VELOCIRAPTOR_URL'] = host
+
+
+@rapt.command()
 def event_stream():
     """Tail the event stream.
 
@@ -28,7 +41,7 @@ def event_stream():
         click.echo(event)
 
 
-@click.command()
+@rapt.command()
 def info():
     """Find the url / username that rapt will be using.
 
@@ -66,28 +79,17 @@ def info():
             resp.raise_for_status()
 
 
-@click.group()
-@click.option('--username', '-u', help='Velociraptor Username')
-@click.option('--host', '-H', help='The Velociraptor URL')
-def rapt(username, host):
-    """Rapt! The velociraptor command line tool."""
-    if username:
-        os.environ['VELOCIRAPTOR_USERNAME'] = username
-    if host:
-        os.environ['VELOCIRAPTOR_URL'] = host
-
-
 rapt.add_command(swarms)
 rapt.add_command(swarm)
 rapt.add_command(reswarm)
 rapt.add_command(releases)
 rapt.add_command(build)
 rapt.add_command(builds)
+rapt.add_command(apps)
 rapt.add_command(add)
+rapt.add_command(ingredients)
+rapt.add_command(ingredient)
 
-rapt.add_command(event_stream)
-rapt.add_command(info)
-# rapt.add_command(test)
 
 if __name__ == '__main__':
     rapt()
