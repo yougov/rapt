@@ -23,7 +23,9 @@ def ingredients(name, verbose):
 
 @click.command()
 @click.argument('name')
-def ingredient(name):
+@click.option('--read', '-r', is_flag=True,
+              help='Read the config elements', default=False)
+def ingredient(name, read):
     """View a complete ingredient config."""
     vr = get_vr()
     q = {'name': name}
@@ -33,6 +35,10 @@ def ingredient(name):
         'config': load_yaml(ingredient.config_yaml),
         'env': load_yaml(ingredient.env_yaml),
     }
+
+    if read:
+        click.echo(dump_yaml(doc))
+        return
 
     config = edit_yaml(dump_yaml(doc))
 
