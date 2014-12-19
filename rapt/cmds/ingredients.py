@@ -35,4 +35,11 @@ def ingredient(name):
     }
 
     config = edit_yaml(dump_yaml(doc))
-    print(config)
+
+    if not config:
+        click.echo('No changes')
+        return
+
+    ingredient.config_yaml = dump_yaml(config['config'])
+    ingredient.env_yaml = dump_yaml(config['env'])
+    ingredient.save()
