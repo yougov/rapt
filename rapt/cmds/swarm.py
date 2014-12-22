@@ -5,7 +5,7 @@ from collections import namedtuple
 import click
 
 from rapt.models import query
-from rapt.util import stdin, edit_yaml, dump_yaml
+from rapt.util import stdin, edit_yaml, dump_yaml, stringify_dict
 from rapt.events import SwarmEvents, filtered_events
 from rapt.connection import get_vr
 
@@ -44,10 +44,9 @@ def load_swarms(vr, names):
 
 def swarm_config(swarm):
     """Create a dict of things you can edit when swarming"""
-    return {
-        'version': str(swarm.version),
-        'size': str(swarm.size)
-    }
+    return stringify_dict({k: v for k, v in
+                           swarm.__dict__.items()
+                           if not k.startswith('_')})
 
 
 def swarm_id_handler(swarm_id):

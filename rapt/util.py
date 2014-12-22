@@ -28,3 +28,18 @@ def stdin():
 def is_resource_uri(string):
     # names can't have slashes
     return '/' in string
+
+
+def stringify_dict(var):
+    result = {}
+    for k, v in var.iteritems():
+        if isinstance(v, basestring):
+            v = str(v)
+        elif isinstance(v, dict):
+            v = stringify_dict(v)
+        elif isinstance(v, list):
+            v = map(str, v)
+
+        result[str(k)] = v
+
+    return result
