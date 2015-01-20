@@ -7,7 +7,7 @@ from rapt.util import dump_yaml, load_yaml, edit_yaml
 
 @click.command()
 @click.option('--name', '-n')
-def ingredients(name, verbose):
+def ingredients(name):
     """List builds.
     """
     vr = get_vr()
