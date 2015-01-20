@@ -44,9 +44,19 @@ def load_swarms(vr, names):
 
 def swarm_config(swarm):
     """Create a dict of things you can edit when swarming"""
-    return stringify_dict({k: v for k, v in
-                           swarm.__dict__.items()
-                           if not k.startswith('_')})
+
+    keys = [
+        'app', 'app_name',
+        'compiled_config',
+        'procs', 'procs_uri',
+        'resource_uri', 'squad',
+    ]
+    config = {
+        k: v for k, v in
+        swarm.__dict__.items()
+        if not k.startswith('_') and k not in keys
+    }
+    return stringify_dict(config)
 
 
 def swarm_id_handler(swarm_id):
