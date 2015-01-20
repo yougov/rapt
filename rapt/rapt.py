@@ -13,6 +13,7 @@ from .cmds.build import build
 from .cmds.builds import builds
 from .cmds.apps import apps
 from .cmds.ingredients import ingredients, ingredient
+from .cmds.deploy import deploy
 
 from pprint import pformat
 
@@ -89,6 +90,7 @@ rapt.add_command(apps)
 rapt.add_command(add)
 rapt.add_command(ingredients)
 rapt.add_command(ingredient)
+rapt.add_command(deploy)
 
 
 if __name__ == '__main__':
